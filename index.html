@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <title>Luke's Map</title>
+        <link rel="stylesheet" href="src/leaflet.css">
+        <link rel="stylesheet" href="src/css/bootstrap.css">
+        <link rel="stylesheet" href="http://cdn.leafletjs.com/leaflet-0.7.3/leaflet.css" />
+        <script src="src/leaflet-src.js"></script>
+        <script src="src/jquery-3.2.1.js"></script>
+        <script src="src/plugins/leaflet-providers.js"></script>
+        <script src="src/plugins/leaflet.ajax.min.js"></script>
+        <script src="http://cdn.leafletjs.com/leaflet-0.7.3/leaflet.js"></script>
+        <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script>
+        <script src="http://cdn.leafletjs.com/leaflet-0.7.3/leaflet.js"></script>
+        <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script>
+        <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script>
+        <script src="src/plugins/leaflet.ajax.min.js"></script>
+       
+        <style>
+            #mapdiv{ width: 1230px; height: 540px; }
+        </style>
+    </head>
+    <body>
+        <div id="side-bar" class="col-md-3"></div>
+        <div id="mapdiv" class="col-md-9"></div>
+        <script>
+            var mymap;
+            var lyrOSM;
+            var lyrTopo;
+            var lyrHikeBike;
+            var lyrDark;
+            var lyrImagery;
+            var ctrLayers;
+            var objBasemaps;
+            var objOverlays;
+            var ctrAttribute;
+            var ctrScale;
+            var lyrTrails;
+            var myStyle;
+            var lyrHikes;
+            var popHikes;
+            
+            $(document).ready(function(){
+                mymap = L.map('mapdiv', {center:[50.95259, -115.14257], zoom:7});
+                lyrOSM = L.tileLayer('http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png');
+                mymap.addLayer(lyrOSM);
+                
+                objBasemaps = {
+                    "Open Street Maps": lyrOSM,
+                    "Topo Map": lyrTopo,
+                    "Imagery": lyrImagery,
+                    "Hike Map": lyrHikeBike,
+		    "Dark Map": lyrDark
+                };
+                
+                fgpDrawnItems = new L.FeatureGroup();
+                fgpDrawnItems.addTo(mymap);
+                      
+                
+                lyrTrails = L.geoJson.ajax('data/Trails.geojson',{style:{color:'#7004FA',
+                    "weight": 3,
+                    "opacity": 0.25}}).addTo(mymap);
+                
+		$.getJSON("data/Hike_3.geojson",function(data){
+		    // add GeoJSON layer to the map once the file is loaded
+		    L.geoJson(data,{
+				    onEachFeature: function (feature, layer) {
+                        if (feature.properties && feature.properties.Name) {
+                            var popupContent = '<table>';
+                            for (var p in feature.properties) {
+                                popupContent += '<tr><td>' + p + ':</td><td><b>' + feature.properties[p] + '</b></td></tr>';
+                            }
+                            popupContent += '</table>';
+                            layer.bindPopup(popupContent);
+                        }
+    }
+			}).addTo(mymap);
+		});
+                    
+                objOverlays = {
+                    "All Trails": lyrTrails
+                };
+                
+                
+                ctlLayers = L.control.layers(objBasemaps, objOverlays).addTo(mymap);
+                
+                ctrScale = L.control.scale({position:'bottomleft'}).addTo(mymap);
+            });
+                
+            
+            
+        </script>
+
+    </body>
+</html>
