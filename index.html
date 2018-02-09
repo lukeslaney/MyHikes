@@ -94,7 +94,7 @@
                             return feature.properties && feature.properties.style;                      
                        },
 
-                function onEachFeature:(feature,layer) {
+                function onEachFeature(feature,layer) {
                     if(feature.properties.Difficulty == "Easy") {
                         // add only 'red' markers to Layer Group
                         greenLayer.addLayer(layer);
